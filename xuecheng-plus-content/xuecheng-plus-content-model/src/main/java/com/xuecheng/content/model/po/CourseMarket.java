@@ -1,4 +1,4 @@
-package com.xuecheng.model.po;
+package com.xuecheng.content.model.po;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
