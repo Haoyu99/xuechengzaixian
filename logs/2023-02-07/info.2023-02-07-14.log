@@ -1,0 +1,14 @@
+2023-02-07 15:00:01,118 DEBUG [HikariPool-1 connection closer][PoolBase.java:134] - HikariPool-1 - Closing connection com.mysql.cj.jdbc.ConnectionImpl@2c3079ba: (connection has passed maxLifetime)
+2023-02-07 15:00:01,121 DEBUG [HikariPool-1 connection adder][HikariPool.java:728] - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@439f8e36
+2023-02-07 15:00:01,121 DEBUG [HikariPool-1 connection adder][HikariPool.java:728] - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@439f8e36
+2023-02-07 15:00:01,118 DEBUG [HikariPool-1 connection closer][PoolBase.java:134] - HikariPool-1 - Closing connection com.mysql.cj.jdbc.ConnectionImpl@2c3079ba: (connection has passed maxLifetime)
+2023-02-07 15:00:01,126 DEBUG [HikariPool-1 connection closer][HikariPool.java:517] - HikariPool-1 - Fill pool skipped, pool is at sufficient level.
+2023-02-07 15:00:01,126 DEBUG [HikariPool-1 connection closer][HikariPool.java:517] - HikariPool-1 - Fill pool skipped, pool is at sufficient level.
+2023-02-07 15:00:01,287 DEBUG [HikariPool-1 housekeeper][HikariPool.java:421] - HikariPool-1 - Pool stats (total=10, active=0, idle=10, waiting=0)
+2023-02-07 15:00:01,287 DEBUG [HikariPool-1 housekeeper][HikariPool.java:421] - HikariPool-1 - Pool stats (total=10, active=0, idle=10, waiting=0)
+2023-02-07 15:00:01,287 DEBUG [HikariPool-1 housekeeper][HikariPool.java:517] - HikariPool-1 - Fill pool skipped, pool is at sufficient level.
+2023-02-07 15:00:01,287 DEBUG [HikariPool-1 housekeeper][HikariPool.java:517] - HikariPool-1 - Fill pool skipped, pool is at sufficient level.
+2023-02-07 15:00:02,902 DEBUG [HikariPool-1 connection closer][PoolBase.java:134] - HikariPool-1 - Closing connection com.mysql.cj.jdbc.ConnectionImpl@1d6764bb: (connection has passed maxLifetime)
+2023-02-07 15:00:02,902 DEBUG [HikariPool-1 connection closer][PoolBase.java:134] - HikariPool-1 - Closing connection com.mysql.cj.jdbc.ConnectionImpl@1d6764bb: (connection has passed maxLifetime)
+2023-02-07 15:00:02,905 DEBUG [HikariPool-1 connection adder][HikariPool.java:728] - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3b43d9d6
+2023-02-07 15:00:02,905 DEBUG [HikariPool-1 connection adder][HikariPool.java:728] - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3b43d9d6
