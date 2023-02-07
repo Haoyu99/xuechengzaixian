@@ -2,6 +2,8 @@ package com.xuecheng.content.api;
 
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
+import com.xuecheng.content.model.dto.AddCourseDto;
+import com.xuecheng.content.model.dto.CourseBaseInfoDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.service.CourseBaseInfoService;
@@ -40,5 +42,23 @@ public class CourseBaseInfoController {
         //调用service获取数据
         PageResult<CourseBase> courseBasePageResult = courseBaseInfoService.queryCourseBaseList(pageParams, queryCourseParams);
         return courseBasePageResult;
+    }
+    /**
+     * 新增课程基础信息
+     * @author haoyu99
+     * @date 2023/2/7 11:27
+     * @param addCourseDto 网页填写的表单内容对象
+     * @return CourseBaseInfoDto
+     */
+
+    @ApiOperation("新增课程基础信息")
+    @PostMapping("/course")
+    public CourseBaseInfoDto createCourseBase(@RequestBody AddCourseDto addCourseDto){
+        // 获取当前用户所属的培训机构id
+        Long companyId = 22L;
+        //调用service
+        CourseBaseInfoDto courseBase = courseBaseInfoService.createCourseBase(companyId, addCourseDto);
+
+        return courseBase;
     }
 }
