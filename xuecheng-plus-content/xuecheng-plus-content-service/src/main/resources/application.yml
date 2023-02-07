@@ -9,3 +9,7 @@ spring:
 # 日志文件配置路径
 logging:
   config: classpath:log4j2-dev.xml
+
+# mybatis-plus
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*.xml

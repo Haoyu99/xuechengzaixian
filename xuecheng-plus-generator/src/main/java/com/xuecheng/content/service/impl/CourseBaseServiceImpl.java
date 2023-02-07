@@ -1,7 +1,7 @@
 package com.xuecheng.content.service.impl;
 
 import com.xuecheng.content.model.po.CourseBase;
-import com.xuecheng.content.mapper.CourseBaseMapper;
+import com.xuecheng.content.controller.mapper.CourseBaseMapper;
 import com.xuecheng.content.service.CourseBaseService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
 package com.xuecheng.content.service.impl;
 
 import com.xuecheng.content.model.po.Teachplan;
-import com.xuecheng.content.mapper.TeachplanMapper;
+import com.xuecheng.content.controller.mapper.TeachplanMapper;
 import com.xuecheng.content.service.TeachplanService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
