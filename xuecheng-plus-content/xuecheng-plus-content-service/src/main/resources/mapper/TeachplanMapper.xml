@@ -76,7 +76,7 @@ SELECT
     m.id teachplanMeidaId,
     m.media_id mediaId
 FROM teachplan one
-    INNER JOIN teachplan two ON two.parentid = one.id
+    LEFT JOIN teachplan two ON two.parentid = one.id
     LEFT JOIN teachplan_media m ON m.teachplan_id = two.id
 WHERE one.parentid='0' and one.course_id = #{value}
 ORDER BY one.orderby, two.orderby

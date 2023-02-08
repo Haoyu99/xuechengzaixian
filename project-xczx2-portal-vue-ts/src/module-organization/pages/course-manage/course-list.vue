@@ -94,7 +94,7 @@
           <el-button
             type="text"
             size="mini"
-            :disabled="scope.row.auditStatus != '202001'"
+            :disabled="scope.row.auditStatus != '202002'"
             @click="handleDelete(scope.$index, scope.row)"
           >删除</el-button>
           <el-button
@@ -328,8 +328,9 @@ export default class extends mixins(MixinTools) {
   private async handleDelete(index: number, row: ICourseBaseDTO) {
     try {
       await this.showDeleteConfirm()
-      if (row.courseBaseId) {
-        await removeCourse(row.courseBaseId)
+      console.log(row)
+      if (row.id) {
+        await removeCourse(row.id)
         await this.getList()
       }
     } catch (error) {}

@@ -6,6 +6,15 @@ server:
 spring:
   application:
     name: system-service
+  cloud:
+    nacos:
+      # 阿里云服务器 8848端口
+      server-addr: 123.57.146.121:8848
+      discovery:
+        namespace: dev
+        group: xuecheng-plus-project
+
+
 
 # 日志文件配置路径
 logging:
