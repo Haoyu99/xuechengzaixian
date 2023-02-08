@@ -37,5 +37,5 @@ Content-Type: application/json
 }
 
 ### 测试查看课程计划
-GET {{content_host}}/content/teachplan/74/tree-nodes
+GET {{gateway_host}}/content/teachplan/74/tree-nodes
 Content-Type: application/json
