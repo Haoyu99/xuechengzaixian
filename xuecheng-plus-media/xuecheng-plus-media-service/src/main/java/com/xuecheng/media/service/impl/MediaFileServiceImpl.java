@@ -2,6 +2,9 @@ package com.xuecheng.media.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.j256.simplemagic.ContentInfo;
+import com.j256.simplemagic.ContentInfoUtil;
+import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
 import com.xuecheng.media.mapper.MediaFilesMapper;
@@ -18,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,67 +73,39 @@ public class MediaFileServiceImpl implements MediaFileService {
   @Transactional
   @Override
   public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto dto, byte[] bytes, String folder, String objectName) {
-   //得到文件的md5值
-   String fileMd5 = DigestUtils.md5Hex(bytes);
+      //生成文件id，文件的md5值
+      String fileId = DigestUtils.md5Hex(bytes);
+      //文件名称
+      String filename = dto.getFilename();
+      //构造objectname
+      if (StringUtils.isEmpty(objectName)) {
+          objectName = fileId + filename.substring(filename.lastIndexOf("."));
+      }
+      if (StringUtils.isEmpty(folder)) {
+          //通过日期构造文件存储路径
+          folder = getFileFolder(new Date(), true, true, true);
+      } else if (folder.indexOf("/") < 0) {
+          folder = folder + "/";
+      }
+      //对象名称
+      objectName = folder + objectName;
+      MediaFiles mediaFiles = null;
+      try {
+          //上传至文件系统
+          addMediaFilesToMinIO(bytes,bucketFile,objectName);
+          //写入文件表
+          mediaFiles = addMediaFilesToDb(companyId,fileId,dto,bucketFile,objectName);
+          UploadFileResultDto uploadFileResultDto = new UploadFileResultDto();
+          BeanUtils.copyProperties(mediaFiles, uploadFileResultDto);
+          return uploadFileResultDto;
+      } catch (Exception e) {
+          e.printStackTrace();
+          XueChengPlusException.cast("上传过程中出错");
+      }
+      return null;
 
-   if(StringUtils.isEmpty(folder)){
-   //自动生成给目录路径 按照 年 月 日生成
-          folder = getFileFolder(new Date(),true, true, true);
-    }else if(folder.indexOf("/") < 0){
-          folder += "/";
-    }
-   String filename = dto.getFilename();
-   if(StringUtils.isEmpty(objectName)){
-     //如果objectName为空 ，使用文件的MD5值
-     objectName = fileMd5 + filename.substring(filename.lastIndexOf("."));
-    }
-   try {
-   //获取文件类型
-     String contentType = dto.getContentType();
-   //字节输入流
-     ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-   //上传到minio
-     PutObjectArgs putObjectArgs = PutObjectArgs.builder()
-           .bucket(bucketFile)
-           .object(folder+"/"+objectName)
-           //InputStream stream, long objectSize, long partSize 分片大小（-1 表示5m，最大不要超过5T，最多10000）
-           .stream(byteArrayInputStream, byteArrayInputStream.available(), -1)
-           .contentType(contentType)
-           .build();
-     minioClient.putObject(putObjectArgs);
 
-    //保存到数据库
-    // fileMd5是主键
-    MediaFiles mediaFiles = mediaFilesMapper.selectById(fileMd5);
-    if(mediaFiles == null){
-     //插入文件表
-      mediaFiles = new MediaFiles();
-      //封装数据
-     BeanUtils.copyProperties(dto,mediaFiles);
-     mediaFiles.setId(fileMd5);
-     mediaFiles.setFileId(fileMd5);
-     mediaFiles.setCompanyId(companyId);
-     mediaFiles.setBucket(bucketFile);
-     mediaFiles.setFilePath(objectName);
-     mediaFiles.setUrl("/"+ bucketFile + "/" + objectName);
-     mediaFiles.setCreateDate(LocalDateTime.now());
-     mediaFiles.setStatus("1");
-     mediaFiles.setAuditStatus("00203");
-        //插入数据
-        mediaFilesMapper.insert(mediaFiles);
-    }
-       //准备返回数据
-       UploadFileResultDto uploadFileResultDto = new UploadFileResultDto();
-       BeanUtils.copyProperties(dto,uploadFileResultDto);
-       return uploadFileResultDto;
-
-   } catch (Exception e) {
-       log.debug("上传文件文件失败,{}",e.getMessage());
-//       throw new XueChengPlusException("上传文件文件失败");
-    }
-         return null;
-
- }
+  }
 
  /**
   * 根据日期拼接目录
@@ -162,6 +138,86 @@ public class MediaFileServiceImpl implements MediaFileService {
       folderString.append("/");
      }
      return folderString.toString();
+    }
+
+    /** 
+     *  将文件写入minIO
+     * @author haoyu99
+     * @date 2023/2/9 13:45
+     * @param bytes  文件字节数组
+     * @param bucket 桶
+     * @param objectName  对象名称
+
+     */
+    
+    private void addMediaFilesToMinIO(byte[] bytes, String bucket, String objectName){
+        try {
+            // 资源的媒体类型
+            String contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;// 默认未知二进制流类型
+            if(objectName.indexOf(".") >= 0){
+               //取 objectName 的扩展名
+                String extension = objectName.substring(objectName.lastIndexOf("."));
+                ContentInfo extensionMatch = ContentInfoUtil.findExtensionMatch(extension);
+                if(extensionMatch != null) {
+                    String mimeType = extensionMatch.getMimeType();
+                }
+
+            }
+            //字节输入流
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+            //上传到minio
+            PutObjectArgs putObjectArgs = PutObjectArgs.builder()
+                    .bucket(bucket)
+                    .object(objectName)
+                    //InputStream stream, long objectSize, long partSize 分片大小（-1 表示5m，最大不要超过5T，最多10000）
+                    .stream(byteArrayInputStream, byteArrayInputStream.available(), -1)
+                    .contentType(contentType)
+                    .build();
+            minioClient.putObject(putObjectArgs);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.debug("上传文件到文件系统出错{}",e.getMessage());
+            XueChengPlusException.cast("上传文件到文件系统出错");
+        }
+    }
+
+    /**
+     * 文件信息入库
+     * @author haoyu99
+     * @date 2023/2/9 14:09
+     * @param companyId  公司id
+     * @param fileMd5  文件唯一id
+     * @param uploadFileParamsDto  文件信息dto
+     * @param bucket 桶
+     * @param objectName 文件名称
+     * @return MediaFiles
+     */
+
+    private MediaFiles addMediaFilesToDb(Long companyId,String fileMd5,UploadFileParamsDto uploadFileParamsDto,
+                                        String bucket,String objectName){
+        //从数据库查询文件
+        MediaFiles mediaFiles = mediaFilesMapper.selectById(fileMd5);
+        if (mediaFiles == null) {
+            mediaFiles = new MediaFiles();
+            //拷贝基本信息
+            BeanUtils.copyProperties(uploadFileParamsDto, mediaFiles);
+            mediaFiles.setId(fileMd5);
+            mediaFiles.setFileId(fileMd5);
+            mediaFiles.setCompanyId(companyId);
+            mediaFiles.setUrl("/" + bucket + "/" + objectName);
+            mediaFiles.setBucket(bucket);
+            mediaFiles.setCreateDate(LocalDateTime.now());
+            mediaFiles.setFilePath(objectName);
+            mediaFiles.setAuditStatus("002003");
+            mediaFiles.setStatus("1");
+            //保存文件信息到文件表
+            int insert = mediaFilesMapper.insert(mediaFiles);
+            if (insert < 0) {
+                XueChengPlusException.cast("保存文件信息失败");
+            }
+
+        }
+        return mediaFiles;
     }
 
 
