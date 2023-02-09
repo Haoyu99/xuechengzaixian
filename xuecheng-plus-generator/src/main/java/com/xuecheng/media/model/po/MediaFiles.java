@@ -1,8 +1,10 @@
 package com.xuecheng.media.model.po;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
-import lombok.ToString;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -15,8 +17,8 @@ import java.time.LocalDateTime;
 * @author haoyu99
 */
     @Data
-    @ToString
-    @TableName("media_files")
+        @EqualsAndHashCode(callSuper = false)
+    @Accessors(chain = true)
     public class MediaFiles implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -24,7 +26,6 @@ import java.time.LocalDateTime;
             /**
             * 文件id,md5值
             */
-    @TableId(value = "id",type = IdType.INPUT)
     private String id;
 
             /**

@@ -3,10 +3,9 @@ package com.xuecheng.media.service;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
 import com.xuecheng.media.model.dto.QueryMediaParamsDto;
+import com.xuecheng.media.model.dto.UploadFileParamsDto;
+import com.xuecheng.media.model.dto.UploadFileResultDto;
 import com.xuecheng.media.model.po.MediaFiles;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.List;
 
 /**
  * @description 媒资文件管理业务类
@@ -26,5 +25,19 @@ public interface MediaFileService {
  */
  public PageResult<MediaFiles> queryMediaFiels(Long companyId,PageParams pageParams, QueryMediaParamsDto queryMediaParamsDto);
 
+
+/**
+ * 上传文件通用接口
+ * @author haoyu99
+ * @date 2023/2/9 9:59
+ * @param companyId  机构id
+ * @param dto 上传文件参数dto
+ * @param bytes 上传文件字节数组
+ * @param folder 桶下的子目录
+ * @param objectName  对象名称
+ * @return UploadFileResultDto
+ */
+
+ public UploadFileResultDto uploadFile(Long companyId,  UploadFileParamsDto dto,byte [] bytes ,String folder,String objectName);
 
 }

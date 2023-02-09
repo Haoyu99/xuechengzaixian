@@ -3,7 +3,7 @@ spring:
     name: media-service
   cloud:
     nacos:
-      server-addr: 192.168.101.65:8848
+      server-addr: 123.57.146.121:8848
       discovery:
         namespace: ${spring.profiles.active}
         group: xuecheng-plus-project
@@ -20,6 +20,7 @@ spring:
 #profiles默认为dev
   profiles:
     active: dev
-
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*.xml
 
 

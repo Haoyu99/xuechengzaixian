@@ -1,8 +1,8 @@
-package com.xuecheng.content.controller;
+package com.xuecheng.media.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.xuecheng.content.service.TeachplanMediaService;
+import com.xuecheng.media.service.MediaFilesService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -10,16 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <p>
- *  前端控制器
+ * 媒资信息 前端控制器
  * </p>
  *
- * @author itcast
+ * @author haoyu99
  */
 @Slf4j
 @RestController
-@RequestMapping("teachplanMedia")
-public class TeachplanMediaController {
+@RequestMapping("mediaFiles")
+public class MediaFilesController {
 
     @Autowired
-    private TeachplanMediaService  teachplanMediaService;
+    private MediaFilesService  mediaFilesService;
 }

@@ -39,3 +39,13 @@ Content-Type: application/json
 ### 测试查看课程计划
 GET {{gateway_host}}/content/teachplan/74/tree-nodes
 Content-Type: application/json
+
+### 测试上传文件
+POST {{media_host}}/media/upload/coursefile
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="filedata"; filename="haoyu.jpg"
+Content-Type: application/octet-stream
+
+< D:/DeskTop/haoyu.jpg
