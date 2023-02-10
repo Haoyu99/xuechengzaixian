@@ -53,7 +53,7 @@ public class MediaFilesController {
         uploadFileParamsDto.setContentType(contentType);
         uploadFileParamsDto.setFileSize(fileData.getSize());
 //        判断content中是否有image
-        if(contentType.indexOf("image") >= 0){
+        if(contentType.contains("image")){
             //是个图片
             uploadFileParamsDto.setFileType("001001");
         }else {
@@ -85,7 +85,8 @@ public class MediaFilesController {
     @GetMapping("/preview/{mediaId}")
     public RestResponse<String> getPlayUrlByMediaId(@PathVariable String mediaId){
         //调用service 获取String
-         return null;
+        MediaFiles mediaFiles = mediaFileService.getFileById(mediaId);
+        return RestResponse.success(mediaFiles.getUrl());
     }
 
 

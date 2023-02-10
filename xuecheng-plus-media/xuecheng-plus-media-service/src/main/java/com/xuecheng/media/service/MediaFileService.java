@@ -98,6 +98,14 @@ public RestResponse<Boolean> checkChunk(String fileMd5, int chunkIndex);
 
  public RestResponse mergechunks(Long companyId,String fileMd5,int chunkTotal,UploadFileParamsDto uploadFileParamsDto);
 
+ /**
+  * 根据id查询文件信息
+  * @author haoyu99
+  * @date 2023/2/10 11:02
+  * @param id
+  * @return MediaFiles
+  */
 
+ public MediaFiles getFileById(String id);
 
 }

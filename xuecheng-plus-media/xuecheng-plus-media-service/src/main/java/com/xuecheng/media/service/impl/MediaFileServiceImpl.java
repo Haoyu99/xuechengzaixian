@@ -97,7 +97,7 @@ public class MediaFileServiceImpl implements MediaFileService {
       if (StringUtils.isEmpty(folder)) {
           //通过日期构造文件存储路径
           folder = getFileFolder(new Date(), true, true, true);
-      } else if (folder.indexOf("/") < 0) {
+      } else if (!folder.contains("/")) {
           folder = folder + "/";
       }
       //对象名称
@@ -163,7 +163,6 @@ public class MediaFileServiceImpl implements MediaFileService {
      */
     
     private void addMediaFilesToMinIO(byte[] bytes, String bucket, String objectName){
-
             // 资源的媒体类型
             String contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;// 默认未知二进制流类型
             if(objectName.indexOf(".") >= 0){
@@ -171,7 +170,7 @@ public class MediaFileServiceImpl implements MediaFileService {
                 String extension = objectName.substring(objectName.lastIndexOf("."));
                 ContentInfo extensionMatch = ContentInfoUtil.findExtensionMatch(extension);
                 if(extensionMatch != null) {
-                    String mimeType = extensionMatch.getMimeType();
+                    contentType = extensionMatch.getMimeType();
                 }
 
             }
@@ -233,8 +232,19 @@ public class MediaFileServiceImpl implements MediaFileService {
             mediaFiles.setId(fileMd5);
             mediaFiles.setFileId(fileMd5);
             mediaFiles.setCompanyId(companyId);
-            //这里需要判断文件类型 再设置URL  图片 mp4 直接设置 其他不行
-            mediaFiles.setUrl("/" + bucket + "/" + objectName);
+            // 这里需要判断文件类型 再设置URL
+            // 获取扩展名
+            String extension = null;
+            String filename = uploadFileParamsDto.getFilename();
+            if(StringUtils.isNotEmpty(filename) && filename.contains(".")){
+                extension = filename.substring(filename.lastIndexOf("."));
+            }
+            String mimeType = getMimeTypeByExtension(extension);
+
+            //图片 mp4 直接设置 其他不行
+            if(mimeType.contains("image") || mimeType.contains("mp4")){
+                mediaFiles.setUrl("/" + bucket + "/" + objectName);
+            }
             mediaFiles.setBucket(bucket);
             mediaFiles.setCreateDate(LocalDateTime.now());
             mediaFiles.setFilePath(objectName);
@@ -447,6 +457,28 @@ public class MediaFileServiceImpl implements MediaFileService {
             }
         }
     }
+
+   /**
+    * 根据id查询文件信息
+    * @author haoyu99
+    * @date 2023/2/10 11:03
+    * @param id
+    * @return MediaFiles
+    */
+
+    @Override
+    public MediaFiles getFileById(String id) {
+        MediaFiles mediaFiles = mediaFilesMapper.selectById(id);
+        if(mediaFiles == null){
+            XueChengPlusException.cast("文件不存在");
+        }
+        String url = mediaFiles.getUrl();
+        if(url.isEmpty()){
+            XueChengPlusException.cast("文件还未处理请稍后预览");
+        }
+        return mediaFiles;
+    }
+
     /**
      * 根据md5 得到分块文件的目录  MD5的第一位/md5的第二位/md5值
      * @author haoyu99
@@ -537,9 +569,38 @@ public class MediaFileServiceImpl implements MediaFileService {
     }
 
 
+
+   /**
+    * 通过MD5值得到文件的路径
+    * @author haoyu99
+    * @date 2023/2/10 10:40
+    * @param fileMd5
+    * @param fileExt
+    * @return String
+    */
     private String getFilePathByMd5(String fileMd5,String fileExt){
         return   fileMd5.substring(0,1) + "/" + fileMd5.substring(1,2) + "/" + fileMd5 + "/" +fileMd5 +fileExt;
     }
+
+    /**
+     * 根据扩展名拿匹配的媒体类型
+     * @author haoyu99
+     * @date 2023/2/10 10:42
+     * @param extension
+     * @return String
+     */
+    private String getMimeTypeByExtension(String extension) {
+        // 资源的媒体类型
+        String contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;// 默认未知二进制流类型
+        if(StringUtils.isNotEmpty(extension)){
+            ContentInfo extensionMatch = ContentInfoUtil.findExtensionMatch(extension);
+            if (extensionMatch != null) {
+                contentType = extensionMatch.getMimeType();
+            }
+        }
+        return contentType;
+    }
+
 
 
 
