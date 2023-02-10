@@ -163,7 +163,7 @@ public class MediaFileServiceImpl implements MediaFileService {
      */
     
     private void addMediaFilesToMinIO(byte[] bytes, String bucket, String objectName){
-        try {
+
             // 资源的媒体类型
             String contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;// 默认未知二进制流类型
             if(objectName.indexOf(".") >= 0){
@@ -175,8 +175,9 @@ public class MediaFileServiceImpl implements MediaFileService {
                 }
 
             }
-            //字节输入流
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+        try (//字节输入流
+             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);) {
+
             //上传到minio
             PutObjectArgs putObjectArgs = PutObjectArgs.builder()
                     .bucket(bucket)
@@ -232,6 +233,7 @@ public class MediaFileServiceImpl implements MediaFileService {
             mediaFiles.setId(fileMd5);
             mediaFiles.setFileId(fileMd5);
             mediaFiles.setCompanyId(companyId);
+            //这里需要判断文件类型 再设置URL  图片 mp4 直接设置 其他不行
             mediaFiles.setUrl("/" + bucket + "/" + objectName);
             mediaFiles.setBucket(bucket);
             mediaFiles.setCreateDate(LocalDateTime.now());
@@ -258,31 +260,35 @@ public class MediaFileServiceImpl implements MediaFileService {
      */
 
     public RestResponse<Boolean> checkFile(String fileMd5) {
+        //在文件表存在，并且在文件系统存在，此文件才存在
         MediaFiles mediaFiles = mediaFilesMapper.selectById(fileMd5);
-        if (mediaFiles != null) {
-            //桶
-            String bucket = mediaFiles.getBucket();
-            //存储目录
-            String filePath = mediaFiles.getFilePath();
-            //文件流
-            InputStream stream = null;
-            try {
-                stream = minioClient.getObject(
-                        GetObjectArgs.builder()
-                                .bucket(bucket)
-                                .object(filePath)
-                                .build());
-
-                if (stream != null) {
-                    //文件已存在
-                    return RestResponse.success(true);
-                }
-            } catch (Exception e) {
-
-            }
+        if(mediaFiles==null){
+            return RestResponse.success(false);
         }
-        //文件不存在
-        return RestResponse.success(false);
+        //查看是否在文件系统存在
+        GetObjectArgs getObjectArgs = GetObjectArgs.builder().bucket(mediaFiles.getBucket()).object(mediaFiles.getFilePath()).build();
+        InputStream  inputStream = null;
+        try {
+             inputStream = minioClient.getObject(getObjectArgs);
+            if(inputStream==null){
+                //文件不存在
+                return RestResponse.success(false);
+            }
+        }catch (Exception e){
+            //文件不存在
+            return RestResponse.success(false);
+        }finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+        //文件已存在
+        return RestResponse.success(true);
     }
 
     @Override
@@ -315,6 +321,14 @@ public class MediaFileServiceImpl implements MediaFileService {
             }
         } catch (Exception e) {
 
+        }finally {
+            if (fileInputStream != null) {
+                try {
+                    fileInputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         //分块未存在
         return RestResponse.success(false);
