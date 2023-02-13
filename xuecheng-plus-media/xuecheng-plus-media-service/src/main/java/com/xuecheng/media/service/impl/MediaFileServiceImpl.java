@@ -9,10 +9,12 @@ import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
 import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.media.mapper.MediaFilesMapper;
+import com.xuecheng.media.mapper.MediaProcessMapper;
 import com.xuecheng.media.model.dto.QueryMediaParamsDto;
 import com.xuecheng.media.model.dto.UploadFileParamsDto;
 import com.xuecheng.media.model.dto.UploadFileResultDto;
 import com.xuecheng.media.model.po.MediaFiles;
+import com.xuecheng.media.model.po.MediaProcess;
 import com.xuecheng.media.service.MediaFileService;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
@@ -55,6 +57,8 @@ public class MediaFileServiceImpl implements MediaFileService {
           //代理对象
   MediaFileService currentProxy;
 
+  @Autowired
+  MediaProcessMapper mediaProcessMapper;
 
     //获取桶的名字
   @Value("${minio.bucket.files}")
@@ -254,6 +258,15 @@ public class MediaFileServiceImpl implements MediaFileService {
             int insert = mediaFilesMapper.insert(mediaFiles);
             if (insert < 0) {
                 XueChengPlusException.cast("保存文件信息失败");
+            }
+            //quicktime
+            if(mimeType.equals("video/quicktime")){
+                //媒体任务处理
+                MediaProcess mediaProcess = new MediaProcess();
+                BeanUtils.copyProperties(mediaFiles,mediaProcess);
+                mediaProcess.setStatus("1");//未处理
+                mediaProcessMapper.insert(mediaProcess);
+
             }
 
         }
