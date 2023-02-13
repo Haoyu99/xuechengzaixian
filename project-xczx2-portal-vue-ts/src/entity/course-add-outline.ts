@@ -104,11 +104,12 @@ export interface ITeachplanMediaDTO {
   /**
    * 媒资信息标识
    */
-  mediaId?: number
+  mediaId?: string
   /**
    * 课程计划标识
    */
-  teachplanId?: number
+  teachplanId?: number 
+
   /**
    * 主键
    */

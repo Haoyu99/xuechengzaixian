@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 * @author itcast
 */
     @Data
-        @EqualsAndHashCode(callSuper = false)
+    @EqualsAndHashCode(callSuper = false)
     @Accessors(chain = true)
     public class TeachplanMedia implements Serializable {
 

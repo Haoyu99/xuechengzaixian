@@ -134,9 +134,8 @@ export async function workAssociation(
 export async function mediaUnAssociation(
   teachplanId: number,
   mediaId: string,
-  courseBaseId: number
 ) {
-  await createAPI(`/content/teachplan/association/media/${teachplanId}/${mediaId}`, 'delete', {
+  await createAPI(`/content/teachplan/association/media/${mediaId}`, 'delete', {
    
   })
 }

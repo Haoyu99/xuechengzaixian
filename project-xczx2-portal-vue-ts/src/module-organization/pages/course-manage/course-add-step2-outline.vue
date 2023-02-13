@@ -451,8 +451,7 @@ export default class extends mixins(MixinTools) {
       await this.showDeleteConfirm()
       await mediaUnAssociation(
         node.teachplanMedia.teachplanId,
-        node.teachplanMedia.mediaId,
-        this.courseBaseId
+        node.teachplanMedia.mediaId
       )
       this.getList()
     } catch (error) {}
