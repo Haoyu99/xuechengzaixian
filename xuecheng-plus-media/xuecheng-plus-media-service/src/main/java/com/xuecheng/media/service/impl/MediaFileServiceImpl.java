@@ -165,8 +165,8 @@ public class MediaFileServiceImpl implements MediaFileService {
      * @param objectName  对象名称
 
      */
-    
-    private void addMediaFilesToMinIO(byte[] bytes, String bucket, String objectName){
+ @Override
+ public void addMediaFilesToMinIO(byte[] bytes, String bucket, String objectName){
             // 资源的媒体类型
             String contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;// 默认未知二进制流类型
             if(objectName.indexOf(".") >= 0){
@@ -198,6 +198,7 @@ public class MediaFileServiceImpl implements MediaFileService {
     }
 
     //将文件上传到minIO，传入文件绝对路径
+  @Override
     public void addMediaFilesToMinIO(String filePath, String bucket, String objectName) {
         try {
             minioClient.uploadObject(
@@ -260,7 +261,7 @@ public class MediaFileServiceImpl implements MediaFileService {
                 XueChengPlusException.cast("保存文件信息失败");
             }
             //quicktime
-            if(mimeType.equals("video/quicktime")){
+            if(mimeType.equals("video/x-msvideo")){
                 //媒体任务处理
                 MediaProcess mediaProcess = new MediaProcess();
                 BeanUtils.copyProperties(mediaFiles,mediaProcess);
@@ -542,7 +543,8 @@ public class MediaFileServiceImpl implements MediaFileService {
      * @param objectName
      */
 
-    private File downloadFileFromMinIO(File file, String bucket, String objectName) {
+    @Override
+    public File downloadFileFromMinIO(File file, String bucket, String objectName) {
         InputStream fileInputStream = null;
         OutputStream fileOutputStream = null;
         try {

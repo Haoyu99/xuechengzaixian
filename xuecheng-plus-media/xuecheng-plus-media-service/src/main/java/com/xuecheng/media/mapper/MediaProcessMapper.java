@@ -25,7 +25,7 @@ public interface MediaProcessMapper extends BaseMapper<MediaProcess> {
     * @return List<MediaProcess>
     */
 
-    @Select("SELECT t.* FROM media_process t WHERE t.id % #{shardTotal} = #{shardIndex} and t.status='1' limit #{count}")
+    @Select("SELECT * FROM media_process t WHERE t.id % #{shardTotal} = #{shardIndex} and t.status='1' limit #{count}")
     List<MediaProcess> selectListByShardIndex
-            (@Param("shardTotal") int shardTotal, @Param("shardindex")
+            (@Param("shardTotal") int shardTotal, @Param("shardIndex")
             int shardIndex, @Param("count") int count);}
