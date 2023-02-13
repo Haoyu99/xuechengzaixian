@@ -34,9 +34,9 @@ public class MediaFileProcessServiceImpl implements MediaFileProcessService {
      * 分布式处理  获取待处理任务
      * @author haoyu99
      * @date 2023/2/10 18:44
-     * @param shardTotal 
-     * @param shardIndex 
-     * @param count 
+     * @param shardTotal 分片总数
+     * @param shardIndex  分片序号
+     * @param count 获取记录数
      * @return List<MediaProcess> 
      */
     
