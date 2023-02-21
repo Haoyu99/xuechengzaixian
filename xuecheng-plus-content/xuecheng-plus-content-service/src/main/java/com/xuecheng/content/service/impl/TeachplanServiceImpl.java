@@ -33,7 +33,7 @@ public class TeachplanServiceImpl implements TeachplanService {
     @Autowired
     TeachplanMediaMapper teachplanMediaMapper;
     @Override
-    public List<TeachplanDto> findTeachplayTree(long courseId) {
+    public List<TeachplanDto> findTeachplanTree(long courseId) {
         return teachplanMapper.selectTreeNodes(courseId);
     }
 
@@ -58,6 +58,36 @@ public class TeachplanServiceImpl implements TeachplanService {
             BeanUtils.copyProperties(dto,teachplan);
             teachplanMapper.updateById(teachplan);
 
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteTeachplan(Long id) {
+        // 首先根据id查询表 获取计划实例
+        Teachplan teachplan = teachplanMapper.selectById(id);
+        if(teachplan != null){
+            //判断是否为一级结点 如果为一级结点则判断是否有子节点
+            Integer grade = teachplan.getGrade();
+            if(grade == 1){
+                LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
+                queryWrapper.eq(Teachplan::getParentid,id);
+                Integer count = teachplanMapper.selectCount(queryWrapper);
+                //没有子目录
+                if(count == 0){
+                    teachplanMapper.deleteById(id);
+                }else {
+                    XueChengPlusException.cast("课程计划信息还有子级信息，无法操作");
+                }
+            }else if(grade == 2){
+                //如果是子节点 删除 且删除对应的 TeachplanMedia 表中信息
+                //先删除媒体信息
+                LambdaQueryWrapper<TeachplanMedia> queryWrapper = new LambdaQueryWrapper<>();
+                queryWrapper.eq(TeachplanMedia::getTeachplanId,id);
+                teachplanMediaMapper.delete(queryWrapper);
+                teachplanMapper.deleteById(id);
+
+            }
         }
     }
 

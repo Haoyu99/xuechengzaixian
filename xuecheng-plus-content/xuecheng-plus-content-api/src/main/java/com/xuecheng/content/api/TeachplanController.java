@@ -37,7 +37,7 @@ public class TeachplanController {
             = "Long",paramType = "path")
     @GetMapping("/teachplan/{courseId}/tree-nodes")
     public List<TeachplanDto> getTreeNodes(@PathVariable Long courseId){
-        return teachplanService.findTeachplayTree(courseId);
+        return teachplanService.findTeachplanTree(courseId);
     }
 
     @PostMapping("teachplan")
@@ -51,6 +51,19 @@ public class TeachplanController {
     
     public void saveTeachplan(@RequestBody SaveTeachplanDto dto){
            teachplanService.saveTeachplan(dto);
+    }
+    /**
+     *  删除课程计划
+     * @author haoyu99
+     * @date 2023/2/21 16:46
+     * @param id  课程计划id
+     * @return RestResponse<Boolean>
+     */
+
+    @DeleteMapping("/teachplan/{teachplanId}")
+    public void deleteTeachplan(@PathVariable Long teachplanId){
+         teachplanService.deleteTeachplan(teachplanId);
+
     }
 
     /**

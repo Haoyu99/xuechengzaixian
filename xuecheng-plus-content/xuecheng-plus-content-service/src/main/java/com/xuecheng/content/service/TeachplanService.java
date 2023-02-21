@@ -23,16 +23,29 @@ public interface TeachplanService {
     * @return List<TeachplanDto>
     */
 
-    public List<TeachplanDto> findTeachplayTree(long courseId);
-   /**
-    * 新增/修改教学计划
-    * @author haoyu99
-    * @date 2023/2/7 19:10
-    * @param dto
+    public List<TeachplanDto> findTeachplanTree(long courseId);
 
-    */
+
+    /**
+     * 新增/修改教学计划
+     * @author haoyu99
+     * @date 2023/2/7 19:10
+     * @param dto
+
+     */
 
     public void saveTeachplan(SaveTeachplanDto dto);
+
+    /**
+     *  删除教学计划
+     * @author haoyu99
+     * @date 2023/2/21 17:22
+     * @param id
+
+     */
+
+    public void deleteTeachplan(Long id);
+
 
     /**
      * 教学计划绑定媒资
@@ -47,7 +60,6 @@ public interface TeachplanService {
      * 删除教学计划与媒资之间的绑定关系
      * @author haoyu99
      * @date 2023/2/13 16:53
-     * @param teachPlanId  教学计划id
      * @param mediaId  媒资文件id
 
      */
