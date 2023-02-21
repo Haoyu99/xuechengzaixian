@@ -52,3 +52,29 @@ Content-Type: application/octet-stream
 
 ### 测试课程教师查询
 GET {{gateway_host}}/content/courseTeacher/list/72
+
+
+### 新增课程教师
+POST {{gateway_host}}/content/courseTeacher
+Content-Type: application/json
+
+{
+"courseId": 135,
+"teacherName": "牛",
+"position": "教师职位",
+"introduction": "教师简介"
+}
+
+### 测试修改课程教师
+POST {{gateway_host}}/content/courseTeacher
+Content-Type: application/json
+
+{
+  "id": 21,
+  "courseId": 135,
+  "teacherName": "马报国",
+  "position": "123",
+  "introduction": "54334",
+  "photograph": null,
+  "createDate": null
+}
