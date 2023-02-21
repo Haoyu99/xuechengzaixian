@@ -57,4 +57,24 @@ public class CourseTeacherServiceImpl implements CourseTeacherService {
         return courseTeacher;
 
     }
+
+    /**
+     * 删除课程教师
+     * @author haoyu99
+     * @date 2023/2/21 19:42
+     * @param courseId 课程号
+     * @param teacherId 教师id
+
+     */
+
+    @Override
+    public void deleteTeacher(Long courseId, Long teacherId) {
+        LambdaQueryWrapper<CourseTeacher> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(CourseTeacher::getCourseId,courseId);
+        lambdaQueryWrapper.eq(CourseTeacher::getId,teacherId);
+        int delete = courseTeacherMapper.delete(lambdaQueryWrapper);
+        if(delete != 1){
+            XueChengPlusException.cast("删除教师异常，请稍后再试");
+        }
+    }
 }

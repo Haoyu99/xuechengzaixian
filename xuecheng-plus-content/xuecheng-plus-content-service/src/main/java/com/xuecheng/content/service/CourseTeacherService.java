@@ -31,4 +31,6 @@ public interface CourseTeacherService {
      */
 
     CourseTeacher  addTeacher(CourseTeacher courseTeacher);
+
+    void deleteTeacher(Long courseId, Long teacherId );
 }
