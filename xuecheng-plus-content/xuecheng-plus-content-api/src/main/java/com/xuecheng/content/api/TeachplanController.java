@@ -56,14 +56,26 @@ public class TeachplanController {
      *  删除课程计划
      * @author haoyu99
      * @date 2023/2/21 16:46
-     * @param id  课程计划id
      * @return RestResponse<Boolean>
      */
 
     @DeleteMapping("/teachplan/{teachplanId}")
     public void deleteTeachplan(@PathVariable Long teachplanId){
          teachplanService.deleteTeachplan(teachplanId);
+    }
 
+   /**
+    * 课程计划上下移动功能
+    * @author haoyu99
+    * @date 2023/2/21 18:39
+    * @param moveType  移动类类型
+    * @param teachplanId 课程计划id
+
+    */
+
+    @PostMapping("/teachplan/{moveType}/{teachplanId}")
+    public void moveUpTeachplan(@PathVariable String moveType ,@PathVariable Long teachplanId){
+        teachplanService.moveTeachplan(moveType,teachplanId);
     }
 
     /**
@@ -93,5 +105,4 @@ public class TeachplanController {
     public void delAssociationMedia(@PathVariable String mediaId){
         teachplanService.delAssociationMedia(mediaId);
     }
-
 }

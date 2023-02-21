@@ -49,3 +49,6 @@ Content-Disposition: form-data; name="filedata"; filename="1.png"
 Content-Type: application/octet-stream
 
 < D:/DeskTop/1.png
+
+### 测试课程教师查询
+GET {{gateway_host}}/content/courseTeacher/list/72

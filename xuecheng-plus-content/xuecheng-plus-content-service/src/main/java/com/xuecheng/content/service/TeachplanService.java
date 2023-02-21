@@ -46,6 +46,16 @@ public interface TeachplanService {
 
     public void deleteTeachplan(Long id);
 
+    /**
+     * 实现课程计划的上移下移
+     * @author haoyu99
+     * @date 2023/2/21 18:12
+     * @param moveType 移动类型 moveup 和 movedown
+     * @param id 课程计划id
+     */
+
+    public void moveTeachplan(String moveType, Long id);
+
 
     /**
      * 教学计划绑定媒资

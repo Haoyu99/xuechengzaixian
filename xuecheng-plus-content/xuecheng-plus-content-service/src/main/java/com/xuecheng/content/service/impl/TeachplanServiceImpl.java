@@ -91,6 +91,66 @@ public class TeachplanServiceImpl implements TeachplanService {
         }
     }
 
+    @Transactional
+    @Override
+    public void moveTeachplan(String moveType, Long id){
+        //确保课程 根据课程计划id可以查到
+        Teachplan teachplan = teachplanMapper.selectById(id);
+        if(teachplan != null){
+            // 获取当前同父同级别的总数
+            int count = getTeachplanCount(teachplan.getCourseId(), teachplan.getParentid());
+            Integer order = teachplan.getOrderby();
+            //如果 当前的order是 1 提示 已经是最顶端了
+            if(moveType.equals("moveup")){
+                if(order == 1){
+                    XueChengPlusException.cast("已经处于最顶部");
+                }
+                //获取上一个课程计划实例
+                LambdaQueryWrapper<Teachplan> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+                lambdaQueryWrapper.eq(Teachplan::getCourseId, teachplan.getCourseId());
+                lambdaQueryWrapper.eq(Teachplan::getParentid, teachplan.getParentid());
+                lambdaQueryWrapper.eq(Teachplan::getOrderby,order - 1);
+                Teachplan teachplanUp = teachplanMapper.selectOne(lambdaQueryWrapper);
+                if(teachplanUp != null){
+                    teachplanUp.setOrderby(order);
+                    teachplan.setOrderby(order - 1);
+                    teachplanMapper.updateById(teachplanUp);
+                    teachplanMapper.updateById(teachplan);
+                }
+
+
+            }else if(moveType.equals("movedown")){
+                if(order == count){
+                    XueChengPlusException.cast("已经处于最底部");
+                }
+                // 获取下一个课程实例
+                //获取上一个课程计划实例
+                LambdaQueryWrapper<Teachplan> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+                lambdaQueryWrapper.eq(Teachplan::getCourseId, teachplan.getCourseId());
+                lambdaQueryWrapper.eq(Teachplan::getParentid, teachplan.getParentid());
+                lambdaQueryWrapper.eq(Teachplan::getOrderby,order + 1);
+                Teachplan teachplanDown = teachplanMapper.selectOne(lambdaQueryWrapper);
+                if(teachplanDown != null){
+                    teachplanDown.setOrderby(order);
+                    teachplan.setOrderby(order + 1);
+                    teachplanMapper.updateById(teachplanDown);
+                    teachplanMapper.updateById(teachplan);
+                }
+            }
+        }
+
+    }
+
+
+    /**
+    * 取出同等级下的结点总数
+    * @author haoyu99
+    * @date 2023/2/21 18:02
+    * @param courseId
+    * @param parentId
+    * @return int
+    */
+
     private int getTeachplanCount(long courseId,long parentId) {
         LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Teachplan::getCourseId, courseId);
