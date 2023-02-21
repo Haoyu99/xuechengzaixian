@@ -5,16 +5,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
-import com.xuecheng.content.mapper.CourseBaseMapper;
-import com.xuecheng.content.mapper.CourseCategoryMapper;
-import com.xuecheng.content.mapper.CourseMarketMapper;
+import com.xuecheng.content.mapper.*;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
 import com.xuecheng.content.model.dto.EditCourseDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
-import com.xuecheng.content.model.po.CourseBase;
-import com.xuecheng.content.model.po.CourseCategory;
-import com.xuecheng.content.model.po.CourseMarket;
+import com.xuecheng.content.model.po.*;
 import com.xuecheng.content.service.CourseBaseInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -46,6 +42,15 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
     @Autowired
     CourseMarketServiceImpl courseMarketService;
+
+    @Autowired
+    TeachplanMapper teachplanMapper;
+
+    @Autowired
+    TeachplanMediaMapper teachplanMediaMapper;
+
+    @Autowired
+    CourseTeacherMapper courseTeacherMapper;
 
     @Override
     /**
@@ -249,6 +254,50 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         saveCourseMarket(courseMarket);
         //返回
         return getCourseBaseInfo(id);
+    }
+
+    @Override
+    @Transactional
+    /**
+     * 删除课程
+     * 课程的审核状态为未提交时方可删除
+     * 需要删除课程相关的基本信息、营销信息、课程计划、课程教师信息。
+     * @author haoyu99
+     * @date 2023/2/21 19:59
+     * @param courseId
+
+     */
+
+    public void deleteCourse(Long courseId) {
+        CourseBase courseBase = courseBaseMapper.selectById(courseId);
+        if(courseBase != null){
+            //获取审核状态
+            String auditStatus = courseBase.getAuditStatus();
+            //审核状态为 未审核才可以删除
+            if(auditStatus.equals("202002")){
+                // 营销信息id 和课程id 一样 先课程的营销信息
+                courseMarketMapper.deleteById(courseId);
+                // 删除课程计划
+                LambdaQueryWrapper<Teachplan> teachplanLambdaQueryWrapper = new LambdaQueryWrapper<>();
+                teachplanLambdaQueryWrapper.eq(Teachplan::getCourseId,courseId);
+                teachplanMapper.delete(teachplanLambdaQueryWrapper);
+                // 删除课程计划-媒资 信息
+//                LambdaQueryWrapper<TeachplanMedia> teachplanMediaLambdaQueryWrapper = new LambdaQueryWrapper<>();
+//                teachplanMediaLambdaQueryWrapper.eq(TeachplanMedia::getCourseId,courseId);
+//                teachplanMediaMapper.delete(teachplanMediaLambdaQueryWrapper);
+                // 删除课程教师信息
+                LambdaQueryWrapper<CourseTeacher> courseTeacherLambdaQueryWrapper = new LambdaQueryWrapper<>();
+                courseTeacherLambdaQueryWrapper.eq(CourseTeacher::getCourseId,courseId);
+                courseTeacherMapper.delete(courseTeacherLambdaQueryWrapper);
+                //最后删除课程
+                courseBaseMapper.deleteById(courseId);
+            }else{
+                XueChengPlusException.cast("课程不可删除！");
+            }
+        }else{
+            XueChengPlusException.cast("课程不存在！");
+        }
+
     }
 
     /**
