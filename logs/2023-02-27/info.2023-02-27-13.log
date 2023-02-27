@@ -1,0 +1,4 @@
+2023-02-27 14:00:00,793 DEBUG [com.alibaba.nacos.client.naming.updater][NamingProxy.java:195] - server list provided by user: [123.57.146.121:8848]
+2023-02-27 14:00:00,793 DEBUG [com.alibaba.nacos.client.naming.updater][NamingProxy.java:195] - server list provided by user: [123.57.146.121:8848]
+2023-02-27 14:00:01,153 DEBUG [com.alibaba.nacos.client.naming.updater][NacosRestTemplate.java:476] - HTTP method: GET, url: http://123.57.146.121:8848/nacos/v1/ns/instance/list?app=unknown&healthyOnly=false&namespaceId=dev&clientIP=192.168.137.159&serviceName=xuecheng-plus-project%40%40content-api&udpPort=54129&clusters=DEFAULT, body: {}
+2023-02-27 14:00:01,153 DEBUG [com.alibaba.nacos.client.naming.updater][NacosRestTemplate.java:476] - HTTP method: GET, url: http://123.57.146.121:8848/nacos/v1/ns/instance/list?app=unknown&healthyOnly=false&namespaceId=dev&clientIP=192.168.137.159&serviceName=xuecheng-plus-project%40%40content-api&udpPort=54129&clusters=DEFAULT, body: {}
