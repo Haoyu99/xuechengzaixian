@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CourseIndexController {
 
     @Value("${elasticsearch.course.index}")
-    private String courseIndexStore;
+    private String courseIndexStore;  //course-publish
 
     @Autowired
     IndexService indexService;
