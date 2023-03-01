@@ -29,18 +29,16 @@ import java.io.IOException;
 public class MediaFilesController {
 
 
-  @Autowired
-  MediaFileService mediaFileService;
-
-
- @ApiOperation("媒资列表查询接口")
- @PostMapping("/files")
- public PageResult<MediaFiles> list(PageParams pageParams, @RequestBody QueryMediaParamsDto queryMediaParamsDto){
-  Long companyId = 1232141425L;
-  return mediaFileService.queryMediaFiels(companyId,pageParams,queryMediaParamsDto);
-
- }
-    @ApiOperation("上传文件")
+    /**
+     * 上传文件接口 将文件传入minio
+     * @author haoyu99
+     * @date 2023/2/28 9:44
+     * @param fileData
+     * @param folder
+     * @param objectName
+     * @return UploadFileResultDto
+     */
+     @ApiOperation("上传文件")
     @RequestMapping(value = "/upload/coursefile",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
     public UploadFileResultDto upload(@RequestPart("filedata") MultipartFile fileData,
@@ -65,13 +63,24 @@ public class MediaFilesController {
         uploadFileParamsDto.setUsername("haoyu99");
         UploadFileResultDto uploadFileResultDto = null;
         try {
-             uploadFileResultDto = mediaFileService.uploadFile(companyId, uploadFileParamsDto, fileData.getBytes(), folder, objectName);
+            uploadFileResultDto = mediaFileService.uploadFile(companyId, uploadFileParamsDto, fileData.getBytes(), folder, objectName);
         }catch (Exception e){
             XueChengPlusException.cast("上传文件过程中出错");
         }
         return uploadFileResultDto;
 
     }
+
+  @Autowired
+  MediaFileService mediaFileService;
+
+    @ApiOperation("媒资列表查询接口")
+ @PostMapping("/files")
+ public PageResult<MediaFiles> list(PageParams pageParams, @RequestBody QueryMediaParamsDto queryMediaParamsDto){
+  Long companyId = 1232141425L;
+  return mediaFileService.queryMediaFiels(companyId,pageParams,queryMediaParamsDto);
+
+ }
 
     /**
      * 预览文件的接口
