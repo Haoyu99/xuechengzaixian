@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.content.config.MultipartSupportConfig;
 import com.xuecheng.content.feignclient.MediaServiceClient;
+import com.xuecheng.content.feignclient.SearchServiceClient;
+import com.xuecheng.content.feignclient.model.CourseIndex;
 import com.xuecheng.content.mapper.CourseBaseMapper;
 import com.xuecheng.content.mapper.CourseMarketMapper;
 import com.xuecheng.content.mapper.CoursePublishMapper;
@@ -73,6 +75,9 @@ public class CoursePublishServiceImpl implements CoursePublishService {
 
     @Autowired //用来调用媒资服务
     MediaServiceClient mediaServiceClient;
+
+    @Autowired //用来调用搜索服务
+    SearchServiceClient searchServiceClient;
 
 
     @Override
@@ -321,5 +326,27 @@ public class CoursePublishServiceImpl implements CoursePublishService {
         if(result == null){
             XueChengPlusException.cast("上传文件失败");
         }
+    }
+  /**
+   * 添加课程索引服务
+   * @author haoyu99
+   * @date 2023/3/1 12:24
+   * @param courseId
+   * @return Boolean
+   */
+
+    @Override
+    public Boolean saveCourseIndex(Long courseId) {
+        //取出课程发布信息
+        CoursePublish coursePublish = coursePublishMapper.selectById(courseId);
+        //拷贝至课程索引对象
+        CourseIndex courseIndex = new CourseIndex();
+        BeanUtils.copyProperties(coursePublish,courseIndex);
+        //远程调用搜索服务api添加课程信息到索引
+        Boolean add = searchServiceClient.add(courseIndex);
+        if(!add){
+            XueChengPlusException.cast("添加索引失败");
+        }
+        return add;
     }
 }

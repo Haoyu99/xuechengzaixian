@@ -48,13 +48,50 @@ public class CoursePublishTask extends MessageProcessAbstract {
         generateCourseHtml(mqMessage,courseId);
 
         //课程索引
-
+        saveCourseIndex(mqMessage,courseId);
 
         //存储到redis
 
         return true;
     }
 
+    /**
+     * 保存课程索引
+     * @author haoyu99
+     * @date 2023/3/1 12:19
+     * @param mqMessage
+     * @param courseId
+
+     */
+
+    private void saveCourseIndex(MqMessage mqMessage, long courseId) {
+        log.debug("开始保存课程索引，课程id:{}",courseId);
+        Long id = mqMessage.getId();
+        MqMessageService mqMessageService = this.getMqMessageService();
+        //判断该任务是否完成
+        int stageTwo = mqMessageService.getStageTwo(id);
+        if(stageTwo > 0){
+            log.debug("当前阶段创建课程索引吗，已经处理过了不再处理，任务信息{}",mqMessage);
+            return;
+        }
+
+        Boolean result = coursePublishService.saveCourseIndex(courseId);
+        if(result){
+            //完成第二阶段
+            mqMessageService.completedStageTwo(id);
+        }
+
+    }
+
+
+   /**
+    * 课程静态化
+    * @author haoyu99
+    * @date 2023/3/1 12:20
+    * @param mqMessage
+    * @param courseId
+
+    */
     private void generateCourseHtml(MqMessage mqMessage, long courseId) {
         log.debug("开始进行课程静态化，课程id:{}",courseId);
         Long id = mqMessage.getId();
