@@ -339,6 +339,9 @@ public class CoursePublishServiceImpl implements CoursePublishService {
     public Boolean saveCourseIndex(Long courseId) {
         //取出课程发布信息
         CoursePublish coursePublish = coursePublishMapper.selectById(courseId);
+        if(coursePublish == null){
+            XueChengPlusException.cast("课程发布信息有误");
+        }
         //拷贝至课程索引对象
         CourseIndex courseIndex = new CourseIndex();
         BeanUtils.copyProperties(coursePublish,courseIndex);
