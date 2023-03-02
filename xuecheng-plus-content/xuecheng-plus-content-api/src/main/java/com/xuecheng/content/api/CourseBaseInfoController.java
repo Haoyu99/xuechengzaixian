@@ -9,6 +9,7 @@ import com.xuecheng.content.model.dto.EditCourseDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.service.CourseBaseInfoService;
+import com.xuecheng.content.util.SecurityUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,8 +57,18 @@ public class CourseBaseInfoController {
     @PostMapping("/course")
     //@Validated  增加校验功能 而不是在Service中手动校验
     public CourseBaseInfoDto createCourseBase(@RequestBody @Validated(ValidationGroups.Insert.class) AddCourseDto addCourseDto){
+        // 获取到携带令牌访问的用户名称（实际是扩充后的用户名称 里面包含的各种信息）
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+
+        String companyIdStr = user.getCompanyId();
+        Long companyId;
         // 获取当前用户所属的培训机构id
-        Long companyId = 22L;
+        if(companyIdStr != null) {
+             companyId = Long.parseLong(companyIdStr);
+        }else
+        {
+             companyId = 22L;
+        }
         //调用service
         CourseBaseInfoDto courseBase = courseBaseInfoService.createCourseBase(companyId, addCourseDto);
 
@@ -73,6 +84,8 @@ public class CourseBaseInfoController {
     @ApiOperation("根据课程id查询课程基础信息")
     @GetMapping("/course/{courseId}")
     public CourseBaseInfoDto getCourseBaseById(@PathVariable Long courseId){
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+        System.out.println(user);
         CourseBaseInfoDto courseBaseInfo = courseBaseInfoService.getCourseBaseInfo(courseId);
         return courseBaseInfo;
     }

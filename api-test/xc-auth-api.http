@@ -1,0 +1,15 @@
+### 授权码模式
+### 第一步申请授权码(浏览器请求)/oauth/authorize?client_id=c1&response_type=code&scope=all&redirect_uri=http://www.xuecheng-plus.com
+### 第二步申请令牌
+POST {{auth_host}}/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=authorization_code&code=EMlRy2&redirect_uri=http://www.xuecheng-plus.com
+
+
+### 密码模式测试
+POST {{auth_host}}/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=password&username=zhy&password=111111
+
+
+### 校验JWT令牌
+POST {{auth_host}}/auth/oauth/check_token?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsieHVlY2hlbmctcGx1cyJdLCJ1c2VyX25hbWUiOiJ7XCJiaXJ0aGRheVwiOlwiMjAyMy0wMy0wMlQxNTozNDoxNFwiLFwiY2VsbHBob25lXCI6XCIxMjNcIixcImNvbXBhbnlJZFwiOlwiMjJcIixcImNyZWF0ZVRpbWVcIjpcIjIwMjMtMDMtMDJUMTU6MzM6NDlcIixcImVtYWlsXCI6XCJOdWxsXCIsXCJpZFwiOlwiNTNcIixcIm5hbWVcIjpcInJvb3RcIixcIm5pY2tuYW1lXCI6XCJOdWxsXCIsXCJwYXNzd29yZFwiOlwiMTIzXCIsXCJwZXJtaXNzaW9uc1wiOltdLFwicXFcIjpcIk51bGxcIixcInNhbHRcIjpcIk51bGxcIixcInNleFwiOlwiMVwiLFwic3RhdHVzXCI6XCIxXCIsXCJ1cGRhdGVUaW1lXCI6XCIyMDIzLTAzLTAyVDE1OjM0OjIyXCIsXCJ1c2VybmFtZVwiOlwiemh5XCIsXCJ1c2VycGljXCI6XCJOdWxsXCIsXCJ1dHlwZVwiOlwiMTAxMDAzXCIsXCJ3eFVuaW9uaWRcIjpcIk51bGxcIn0iLCJzY29wZSI6WyJhbGwiXSwiZXhwIjoxNjc3NzY2MTM4LCJhdXRob3JpdGllcyI6WyJwMSJdLCJqdGkiOiI4ODk1MThkZC0zNDEyLTQ2MDMtYjcwNS0yYzAwNWUwNzJlZWEiLCJjbGllbnRfaWQiOiJYY1dlYkFwcCJ9.-7sfIBEErpzbSk7BhYaSnFX6rm_goPPaDlIRbH8HEbQ
+
+### 测试多方式认证
+POST {{auth_host}}/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=password&username={"authType":"password","username":"zhy","password":"111111"}
